@@ -16,6 +16,7 @@ use constant {
     MODE_RELAX  => MODE_FPC | MODE_DELPHI,  # 0011
 };
 
+
 # The lint rule switches.
 use constant {
     RULE_LONG_LINE  => 1 << 0,  # 0001
@@ -24,12 +25,9 @@ use constant {
 my $RULES = RULE_LONG_LINE | RULE_SNAKE_CASE;
 
 
-# TODO: Set Pascal mode.
-our %KEYWORDS = pascal_keywords();
-our %SYMBOLS = pascal_symbols();
-our %COMPOUND_SYMBOLS = pascal_compound_symbols();
-
 # The main CLI program.
+our $PROGRAM = init();
+
 for my $arg (@ARGV) {
     my $file_name = $arg;
     open(my $FH, '<', $file_name) or die "Unable to open $file_name";
@@ -53,109 +51,24 @@ for my $arg (@ARGV) {
 # End of the main CLI program.
 
 
-sub pascal_keywords($mode = MODE_RELAX) {
-    # Free Pascal 3.2.2
-    my @turboPascalKeywords = ('absolute', 'and', 'array', 'asm', 'begin',
-        'case', 'const', 'constructor', 'destructor', 'div', 'do', 'downto',
-        'else', 'end', 'file', 'for', 'function', 'goto', 'if',
-        'implementation', 'in', 'inherited', 'inline', 'interface', 'label',
-        'mod', 'nil', 'not', 'object', 'of', 'operator', 'or', 'packed',
-        'procedure', 'program', 'record', 'reintroduce', 'repeat', 'self',
-        'set', 'shl', 'shr', 'string', 'then', 'to', 'type', 'unit', 'until',
-        'uses', 'var', 'while', 'with', 'xor');
-    # Free Pascal 3.2.2
-    my @objectPascalKeywords = ('as', 'class', 'dispinterface', 'except',
-        'exports', 'finalization', 'finally', 'initialization', 'inline',
-        'is', 'library', 'on', 'out', 'packed', 'property', 'raise',
-        'resourcestring', 'threadvar', 'try');
-    # Delphi 13.1
-    my @delphiKeywords = ('and', 'end', 'interface', 'record', 'var', 'array',
-        'except', 'is', 'repeat', 'while', 'as', 'exports', 'label',
-        'resourcestring', 'with', 'asm', 'file', 'library', 'set', 'xor',
-        'begin', 'finalization', 'mod', 'shl', 'case', 'finally', 'nil',
-        'shr', 'class', 'for', 'not', 'string', 'const', 'function', 'object',
-        'then', 'constructor', 'goto', 'of', 'threadvar', 'destructor', 'if',
-        'or', 'to', 'dispinterface', 'implementation', 'packed', 'try', 'div',
-        'in', 'procedure', 'type', 'do', 'inherited', 'program', 'unit',
-        'downto', 'initialization', 'property', 'until', 'else', 'inline',
-        'raise', 'uses');
+use constant {
+    PROGRAM_KEYWORDS         => 'keywords',
+    PROGRAM_SYMBOLS          => 'symbols',
+    PROGRAM_COMPOUND_SYMBOLS => 'compound_symbols',
+};
 
-    my %ks = ();
+# Init the internal data.
+sub init($config = {}) {
+    # Simply ignore $config for now.
 
-    if ($mode & MODE_FPC) {
-        for my $k (@turboPascalKeywords) {
-            $ks{$k} = 1;  # True
-        }
+    my $program = {};
 
-        for my $k (@objectPascalKeywords) {
-            $ks{$k} = 1;  # True
-        }
-    }
+    # TODO: Set Pascal mode.
+    %{$program->{PROGRAM_KEYWORDS}} = pascal_keywords();
+    %{$program->{PROGRAM_SYMBOLS}} = pascal_symbols();
+    %{$program->{PROGRAM_COMPOUND_SYMBOLS}} = pascal_compound_symbols();
 
-    if ($mode & MODE_DELPHI) {
-        for my $k (@delphiKeywords) {
-            $ks{$k} = 1;  # True
-        }
-    }
-
-    return %ks;
-}
-
-sub pascal_symbols($mode = MODE_RELAX) {
-    # Free Pascal 3.2.2
-    my @freePascalSymbols = (
-        "'", '+', '-', '*',  '/', '=', '<', '>', '[', ']', '.', ',', '(', ')',
-        ':', '^',  '@', '{', '}', '$', '#', '&', '%'
-    );
-    # Delphi 13.1
-    my @delphiSymbols = (
-        '#', '$', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';',
-        '<', '=', '>', '@', '[', ']', '^', '{', '}'
-    );
-
-    my %ss = ();
-
-    if ($mode & MODE_FPC) {
-        for my $s (@freePascalSymbols) {
-            $ss{$s} = 1;  # True
-        }
-    }
-
-    if ($mode & MODE_DELPHI) {
-        for my $s (@delphiSymbols) {
-            $ss{$s} = 1;  # True
-        }
-    }
-
-    return %ss;
-}
-
-sub pascal_compound_symbols($mode = MODE_RELAX) {
-    # Free Pascal 3.2.2
-    my @freePascalSymbols = (
-        '<<', '>>', '**', '<>', '><', '<=', '>=', ':=', '+=', '-=', '*=', '/=',
-        '(*', '*)', '(.', '.)', '//'
-    );
-    # Delphi 13.1
-    my @delphiSymbols = (
-        '(*', '(.', '*)', '.)', '..', '//', ':=', '<=', '>=', '<>'
-    );
-
-    my %ss = ();
-
-    if ($mode & MODE_FPC) {
-        for my $s (@freePascalSymbols) {
-            $ss{$s} = 1;  # True
-        }
-    }
-
-    if ($mode & MODE_DELPHI) {
-        for my $s (@delphiSymbols) {
-            $ss{$s} = 1;  # True
-        }
-    }
-
-    return %ss;
+    return $program;
 }
 
 
@@ -431,15 +344,15 @@ sub token_format($t) {
 
 # Utility subroutines.
 sub is_keyword($k) {
-    return $KEYWORDS{lc($k)};
+    return ${$PROGRAM->{PROGRAM_KEYWORDS}}{lc($k)};
 }
 
 sub is_symbol($s) {
-    return $SYMBOLS{$s};
+    return ${$PROGRAM->{PROGRAM_SYMBOLS}}{$s};
 }
 
 sub is_compound_symbol($s) {
-    return $COMPOUND_SYMBOLS{$s};
+    return ${$PROGRAM->{PROGRAM_COMPOUND_SYMBOLS}}{$s};
 }
 
 sub is_idenfitier_prefix($s) {
@@ -481,4 +394,109 @@ sub is_newline($s) {
 sub is_code($s) {
     return ((not is_identifier($s)) and (not is_space($s))
         and (not is_newline($s)) and (not is_symbol($s))); 
+}
+
+sub pascal_keywords($mode = MODE_RELAX) {
+    # Free Pascal 3.2.2
+    my @turboPascalKeywords = ('absolute', 'and', 'array', 'asm', 'begin',
+        'case', 'const', 'constructor', 'destructor', 'div', 'do', 'downto',
+        'else', 'end', 'file', 'for', 'function', 'goto', 'if',
+        'implementation', 'in', 'inherited', 'inline', 'interface', 'label',
+        'mod', 'nil', 'not', 'object', 'of', 'operator', 'or', 'packed',
+        'procedure', 'program', 'record', 'reintroduce', 'repeat', 'self',
+        'set', 'shl', 'shr', 'string', 'then', 'to', 'type', 'unit', 'until',
+        'uses', 'var', 'while', 'with', 'xor');
+    # Free Pascal 3.2.2
+    my @objectPascalKeywords = ('as', 'class', 'dispinterface', 'except',
+        'exports', 'finalization', 'finally', 'initialization', 'inline',
+        'is', 'library', 'on', 'out', 'packed', 'property', 'raise',
+        'resourcestring', 'threadvar', 'try');
+    # Delphi 13.1
+    my @delphiKeywords = ('and', 'end', 'interface', 'record', 'var', 'array',
+        'except', 'is', 'repeat', 'while', 'as', 'exports', 'label',
+        'resourcestring', 'with', 'asm', 'file', 'library', 'set', 'xor',
+        'begin', 'finalization', 'mod', 'shl', 'case', 'finally', 'nil',
+        'shr', 'class', 'for', 'not', 'string', 'const', 'function', 'object',
+        'then', 'constructor', 'goto', 'of', 'threadvar', 'destructor', 'if',
+        'or', 'to', 'dispinterface', 'implementation', 'packed', 'try', 'div',
+        'in', 'procedure', 'type', 'do', 'inherited', 'program', 'unit',
+        'downto', 'initialization', 'property', 'until', 'else', 'inline',
+        'raise', 'uses');
+
+    my %ks = ();
+
+    if ($mode & MODE_FPC) {
+        for my $k (@turboPascalKeywords) {
+            $ks{$k} = 1;  # True
+        }
+
+        for my $k (@objectPascalKeywords) {
+            $ks{$k} = 1;  # True
+        }
+    }
+
+    if ($mode & MODE_DELPHI) {
+        for my $k (@delphiKeywords) {
+            $ks{$k} = 1;  # True
+        }
+    }
+
+    return %ks;
+}
+
+sub pascal_symbols($mode = MODE_RELAX) {
+    # Free Pascal 3.2.2
+    my @freePascalSymbols = (
+        "'", '+', '-', '*',  '/', '=', '<', '>', '[', ']', '.', ',', '(', ')',
+        ':', '^',  '@', '{', '}', '$', '#', '&', '%'
+    );
+    # Delphi 13.1
+    my @delphiSymbols = (
+        '#', '$', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';',
+        '<', '=', '>', '@', '[', ']', '^', '{', '}'
+    );
+
+    my %ss = ();
+
+    if ($mode & MODE_FPC) {
+        for my $s (@freePascalSymbols) {
+            $ss{$s} = 1;  # True
+        }
+    }
+
+    if ($mode & MODE_DELPHI) {
+        for my $s (@delphiSymbols) {
+            $ss{$s} = 1;  # True
+        }
+    }
+
+    return %ss;
+}
+
+sub pascal_compound_symbols($mode = MODE_RELAX) {
+    # Free Pascal 3.2.2
+    my @freePascalSymbols = (
+        '<<', '>>', '**', '<>', '><', '<=', '>=', ':=', '+=', '-=', '*=', '/=',
+        '(*', '*)', '(.', '.)', '//'
+    );
+    # Delphi 13.1
+    my @delphiSymbols = (
+        '(*', '(.', '*)', '.)', '..', '//', ':=', '<=', '>=', '<>'
+    );
+
+    my %ss = ();
+
+    if ($mode & MODE_FPC) {
+        for my $s (@freePascalSymbols) {
+            $ss{$s} = 1;  # True
+        }
+    }
+
+    if ($mode & MODE_DELPHI) {
+        for my $s (@delphiSymbols) {
+            $ss{$s} = 1;  # True
+        }
+    }
+
+    return %ss;
 }
