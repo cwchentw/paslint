@@ -1,0 +1,50 @@
+#!/usr/bin/env perl
+
+# Enable Modern Perl.
+use feature ':5.36';
+
+use Data::Dumper;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+use Pascal::Token;
+use Pascal::Lexer;
+use Pascal::AST;
+use Pascal::Parser;
+
+
+# The lint rule switches.
+use constant {
+    RULE_LONG_LINE  => 1 << 0,  # 0001
+    RULE_SNAKE_CASE => 1 << 1,  # 0010
+};
+my $RULES = RULE_LONG_LINE | RULE_SNAKE_CASE;
+
+
+# Simply use default setting for now.
+init();
+
+for my $arg (@ARGV) {
+    my $file_name = $arg;
+    open(my $FH, '<', $file_name) or die "Unable to open $file_name";
+
+    my $lexer = lexer_create();
+    my $line_number = 1;
+
+    while (my $line = <$FH>) {
+        lexer_lex($lexer, $line, $line_number);
+
+        $line_number++;
+    }
+
+    close $FH;
+
+    my $parser = parser_create();
+    parser_parse($parser, $lexer);
+
+    while (parser_has_next($parser)) {
+        $ast = parser_next($parser);
+
+        say ast_format($ast);
+    }
+}
