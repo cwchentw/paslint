@@ -72,7 +72,7 @@ sub init($config = {}) {
     %{$program->{PROGRAM_SYMBOLS}} = pascal_symbols();
     %{$program->{PROGRAM_COMPOUND_SYMBOLS}} = pascal_compound_symbols();
 
-    return $program;
+    $program;
 }
 
 
@@ -100,7 +100,7 @@ sub parser_create() {
     my $parser = {};
     $parser->{PARSER_ASTS} = ();
     $parser->{PARSER_INDEX} = 0;
-    return $parser;
+    $parser;
 }
 
 sub parser_add_ast($parser, $ast) {
@@ -110,20 +110,20 @@ sub parser_add_ast($parser, $ast) {
 sub parser_has_next($parser) {
     my $i = $parser->{PARSER_INDEX};
     my $len = scalar @{$parser->{PARSER_ASTS}};
-    return $i < $len;
+    $i < $len;
 }
 
 sub parser_next($parser) {
     my $i = $parser->{PARSER_INDEX};
     my $ast = @{$parser->{PARSER_ASTS}}[$i];
     ($parser->{PARSER_INDEX})++;
-    return $ast;
+    $ast;
 }
 
 sub parser_peek($parser) {
     my $i = $parser->{PARSER_INDEX};
     my $ast = @{$parser->{PARSER_ASTS}}[$i];
-    return $ast;
+    $ast;
 }
 
 sub parser_parse($parser, $lexer) {
@@ -225,7 +225,7 @@ sub parser_parse_statement($parser, $lexer) {
         ast_add_tokens($ast, $token);
     }
 
-    return $ast;
+    $ast;
 }
 # End of the fuzzy parser.
 
@@ -236,7 +236,7 @@ sub block_ast_create() {
     block_ast_set_type($ast, AST_TYPE_UNKNOWN);
     $ast->{AST_STATEMENTS} = ();
     $ast->{AST_INDEX} = 0;
-    return 0;
+    $ast;
 }
 
 sub block_ast_type($ast) {
@@ -291,11 +291,11 @@ sub ast_create() {
     ast_set_type($ast, AST_TYPE_UNKNOWN);
     $ast->{AST_TOKENS} = ();
     $ast->{AST_INDEX} = 0;
-    return $ast;
+    $ast;
 }
 
 sub ast_type($ast) {
-    return $ast->{AST_TYPE};
+    $ast->{AST_TYPE};
 }
 
 sub ast_set_type($ast, $type) {
@@ -309,20 +309,20 @@ sub ast_add_tokens($ast, $token) {
 sub ast_has_next($ast) {
     my $i = $ast->{AST_INDEX};
     my $len = scalar @{$ast->{AST_TOKENS}};
-    return $i < $len;
+    $i < $len;
 }
 
 sub ast_next($ast) {
     my $i = $ast->{AST_INDEX};
     my $t = @{$ast->{AST_TOKENS}}[$i];
     ($ast->{AST_INDEX})++;
-    return $t;
+    $t;
 }
 
 sub ast_peek($ast) {
     my $i = $ast->{AST_INDEX};
     my $t = @{$ast->{AST_TOKENS}}[$i];
-    return $t;
+    $t;
 }
 
 sub ast_format($ast) {
@@ -340,7 +340,7 @@ sub _ast_format($ast) {
         $t = ast_next($ast);
         $s = $s . token_format($t) . ' ';
     }
-    return $s;
+    $s;
 }
 # End of the ast object.
 
@@ -376,26 +376,26 @@ sub lexer_create() {
     my $lexer = {};
     $lexer->{LEXER_TOKENS} = ();
     $lexer->{LEXER_INDEX} = 0;
-    return $lexer;
+    $lexer;
 }
 
 sub lexer_has_next($lexer) {
     my $index = $lexer->{LEXER_INDEX};
     my $len = scalar @{$lexer->{LEXER_TOKENS}};
-    return $index < $len;
+    $index < $len;
 }
 
 sub lexer_next($lexer) {
     my $i = $lexer->{LEXER_INDEX};
     my $t = @{$lexer->{LEXER_TOKENS}}[$i];
     ($lexer->{LEXER_INDEX})++;
-    return $t;
+    $t;
 }
 
 sub lexer_peek($lexer) {
     my $i = $lexer->{LEXER_INDEX};
     my $t = @{$lexer->{LEXER_TOKENS}}[$i];
-    return $t;
+    $t;
 }
 
 sub lexer_lex($lexer, $s, $l) {
@@ -571,11 +571,11 @@ sub token_create() {
     token_set_content($t, '');
     token_set_line_number($t, 1);
     token_set_column_number($t, 1);
-    return $t;
+    $t;
 }
 
 sub token_type($token) {
-    return $token->{TOKEN_TYPE};
+    $token->{TOKEN_TYPE};
 }
 
 sub token_set_type($token, $type) {
@@ -583,7 +583,7 @@ sub token_set_type($token, $type) {
 }
 
 sub token_content($token) {
-    return $token->{TOKEN_CONTENT};
+    $token->{TOKEN_CONTENT};
 }
 
 sub token_set_content($token, $content) {
@@ -591,7 +591,7 @@ sub token_set_content($token, $content) {
 }
 
 sub token_line_number($token) {
-    return $token->{TOKEN_LINE};
+    $token->{TOKEN_LINE};
 }
 
 sub token_set_line_number($token, $n) {
@@ -599,7 +599,7 @@ sub token_set_line_number($token, $n) {
 }
 
 sub token_column_number($token) {
-    return $token->{TOKEN_COLUMN};
+    $token->{TOKEN_COLUMN};
 }
 
 sub token_set_column_number($token, $n) {
@@ -613,22 +613,22 @@ sub token_format($t) {
 }
 
 sub is_token_type($token, $type) {
-    return token_type($token) eq $type;
+    token_type($token) eq $type;
 }
 # End of the token object.
 
 
 # Utility subroutines.
 sub is_keyword($k) {
-    return ${$PROGRAM->{PROGRAM_KEYWORDS}}{lc($k)};
+    ${$PROGRAM->{PROGRAM_KEYWORDS}}{lc($k)};
 }
 
 sub is_symbol($s) {
-    return ${$PROGRAM->{PROGRAM_SYMBOLS}}{$s};
+    ${$PROGRAM->{PROGRAM_SYMBOLS}}{$s};
 }
 
 sub is_compound_symbol($s) {
-    return ${$PROGRAM->{PROGRAM_COMPOUND_SYMBOLS}}{$s};
+    ${$PROGRAM->{PROGRAM_COMPOUND_SYMBOLS}}{$s};
 }
 
 sub is_idenfitier_prefix($s) {
@@ -668,7 +668,7 @@ sub is_newline($s) {
 }
 
 sub is_code($s) {
-    return ((not is_identifier($s)) and (not is_space($s))
+    ((not is_identifier($s)) and (not is_space($s))
         and (not is_newline($s)) and (not is_symbol($s))); 
 }
 
@@ -753,7 +753,7 @@ sub pascal_keywords($mode = MODE_RELAX) {
         }
     }
 
-    return %ks;
+    %ks;
 }
 
 sub pascal_symbols($mode = MODE_RELAX) {
@@ -782,7 +782,7 @@ sub pascal_symbols($mode = MODE_RELAX) {
         }
     }
 
-    return %ss;
+    %ss;
 }
 
 sub pascal_compound_symbols($mode = MODE_RELAX) {
@@ -810,5 +810,5 @@ sub pascal_compound_symbols($mode = MODE_RELAX) {
         }
     }
 
-    return %ss;
+    %ss;
 }
