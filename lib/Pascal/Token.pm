@@ -1,6 +1,6 @@
 package Pascal::Token;
 
-use feature ':5.36';
+use v5.36;
 
 use Exporter 'import';
 

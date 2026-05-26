@@ -1,6 +1,6 @@
 package Pascal::Lexer;
 
-use feature ':5.36';
+use v5.36;
 
 use Exporter 'import';
 
@@ -29,7 +29,7 @@ use constant {
     LEXER_INDEX  => 'index',
 };
 
-our %PROGRAM = {};
+our $PROGRAM = {};
 
 sub lexer_create() {
     my $lexer = {};

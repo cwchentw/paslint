@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
-# Enable Modern Perl.
-use feature ':5.36';
+use v5.36;
 
 use FindBin;
 use lib "$FindBin::Bin/../lib";
@@ -42,7 +41,7 @@ for my $arg (@ARGV) {
     parser_parse($parser, $lexer);
 
     while (parser_has_next($parser)) {
-        $ast = parser_next($parser);
+        my $ast = parser_next($parser);
 
         say ast_format($ast);
     }

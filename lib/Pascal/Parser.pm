@@ -1,6 +1,6 @@
 package Pascal::Parser;
 
-use feature ':5.36';
+use v5.36;
 
 use Exporter 'import';
 
