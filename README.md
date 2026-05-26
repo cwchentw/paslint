@@ -18,14 +18,11 @@ The internal Pascal engine utilizes a **fuzzy parser** approach. It focuses on i
 
 ## 📦 Installation
 
-To install `paslint` globally on your system:
+Add the `paslint/bin` directory to your system `PATH`:
 
 ```bash
-# Make the script executable
-chmod +x paslint
-
-# Copy to your local bin directory (ensure ~/bin is in your $PATH)
-cp -p paslint ~/bin/
+PATH="$PATH:/absolute/path/to/paslint/bin"
+export PATH
 ```
 
 ## 🚀 Usage
