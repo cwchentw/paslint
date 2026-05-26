@@ -3,7 +3,7 @@
 # Enable Modern Perl.
 use feature ':5.36';
 
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 
 # Pascal mode for keywords and modifiers.
 use constant {
@@ -32,7 +32,7 @@ for my $arg (@ARGV) {
     my $file_name = $arg;
     open(my $FH, '<', $file_name) or die "Unable to open $file_name";
 
-    my $lexer = lexer_create;
+    my $lexer = lexer_create();
     my $line_number = 1;
 
     while (my $line = <$FH>) {
@@ -43,9 +43,13 @@ for my $arg (@ARGV) {
 
     close $FH;
 
-    while (lexer_has_next($lexer)) {
-        my $t = lexer_next($lexer);
-        say token_format($t);
+    my $parser = parser_create();
+    parser_parse($parser, $lexer);
+
+    while (parser_has_next($parser)) {
+        $ast = parser_next($parser);
+
+        say ast_format($ast);
     }
 }
 # End of the main CLI program.
@@ -71,6 +75,153 @@ sub init($config = {}) {
     return $program;
 }
 
+
+use constant {
+    AST_TYPE_UNKNOWN             => 'unknown',
+    AST_TYPE_PROGRAM_DECLARATION => 'program_declaration',
+};
+
+use constant {
+    AST_TYPE   => 'type',
+    AST_TOKENS => 'tokens',
+    AST_INDEX  => 'index',
+};
+
+use constant {
+    PARSER_ASTS  => 'asts',
+    PARSER_INDEX => 'index',
+};
+
+# The fuzzy parser.
+sub parser_create() {
+    my $parser = {};
+    $parser->{PARSER_ASTS} = ();
+    $parser->{PARSER_INDEX} = 0;
+    return $parser;
+}
+
+sub parser_add_ast($parser, $ast) {
+    push @{$parser->{PARSER_ASTS}}, $ast;
+}
+
+sub parser_has_next($parser) {
+    my $i = $parser->{PARSER_INDEX};
+    my $len = scalar @{$parser->{PARSER_ASTS}};
+    return $i < $len;
+}
+
+sub parser_next($parser) {
+    my $i = $parser->{PARSER_INDEX};
+    my $ast = @{$parser->{PARSER_ASTS}}[$i];
+    ($parser->{PARSER_INDEX})++;
+    return $ast;
+}
+
+sub parser_peek($parser) {
+    my $i = $parser->{PARSER_INDEX};
+    my $ast = @{$parser->{PARSER_ASTS}}[$i];
+    return $ast;
+}
+
+sub parser_parse($parser, $lexer) {
+    while (lexer_has_next($lexer)) {
+        my $peek = lexer_peek($lexer);
+
+        if (is_program_declaration_token($peek)) {
+            parser_add_ast($parser,
+                parser_parse_statement($parser, $lexer));
+        }
+
+        # Discard anything else.
+        lexer_next($lexer);
+    }
+}
+
+sub parser_parse_statement($parser, $lexer) {
+    my $ast = ast_create();
+
+    while (lexer_has_next($lexer)) {
+        my $peek = lexer_peek($lexer);
+
+        if (is_newline_token($peek)) {
+            # Discard the token.
+            lexer_next($lexer);
+
+            # Some Pascal statements span multiple lines.
+            next;
+        }
+
+        if (is_statement_token($peek)) {
+            # Discard the token.
+            lexer_next($lexer);
+
+            # A statement stop here.
+            last;
+        }
+
+        my $token = lexer_next($lexer);
+
+        if (is_program_declaration_token($token)) {
+            ast_set_type($ast, AST_TYPE_PROGRAM_DECLARATION);
+        }
+
+        ast_add_tokens($ast, $token);
+    }
+
+    return $ast;
+}
+# End of the fuzzy parser.
+
+
+# The ast object.
+sub ast_create() {
+    my $ast = {};
+    ast_set_type($ast, AST_TYPE_UNKNOWN);
+    $ast->{AST_TOKENS} = ();
+    $ast->{AST_INDEX} = 0;
+    return $ast;
+}
+
+sub ast_type($ast) {
+    return $ast->{AST_TYPE};
+}
+
+sub ast_set_type($ast, $type) {
+    $ast->{AST_TYPE} = $type;
+}
+
+sub ast_add_tokens($ast, $token) {
+    push @{$ast->{AST_TOKENS}}, $token;
+}
+
+sub ast_has_next($ast) {
+    my $i = $ast->{AST_INDEX};
+    my $len = scalar @{$ast->{AST_TOKENS}};
+    return $i < $len;
+}
+
+sub ast_next($ast) {
+    my $i = $ast->{AST_INDEX};
+    my $t = @{$ast->{AST_TOKENS}}[$i];
+    ($ast->{AST_INDEX})++;
+    return $t;
+}
+
+sub ast_peek($ast) {
+    my $i = $ast->{AST_INDEX};
+    my $t = @{$ast->{AST_TOKENS}}[$i];
+    return $t;
+}
+
+sub ast_format($ast) {
+    my $s = '[' . ast_type($ast) . '] ';
+    while (ast_has_next($ast)) {
+        $t = ast_next($ast);
+        $s = $s . token_format($t) . ' ';
+    }
+    return $s;
+}
+# End of the ast object.
 
 use constant {
     TOKEN_TYPE    => 'type',
@@ -339,6 +490,10 @@ sub token_format($t) {
     . "(" . $t->{TOKEN_LINE} . "," . $t->{TOKEN_COLUMN} . ") "
     . "<" . $t->{TOKEN_CONTENT} . ">";
 }
+
+sub is_token_type($token, $type) {
+    return token_type($token) eq $type;
+}
 # End of the token object.
 
 
@@ -394,6 +549,21 @@ sub is_newline($s) {
 sub is_code($s) {
     return ((not is_identifier($s)) and (not is_space($s))
         and (not is_newline($s)) and (not is_symbol($s))); 
+}
+
+sub is_newline_token($token) {
+    is_token_type($token, TOKEN_TYPE_NEWLINE);
+}
+
+sub is_statement_token($token) {
+    is_token_type($token, TOKEN_TYPE_STATEMENT);
+}
+
+sub is_program_declaration_token($token) {
+    is_token_type($token, TOKEN_TYPE_KEYWORD)
+        and ((lc(token_content($token)) eq 'program')
+            or (lc(token_content($token)) eq 'unit')
+            or (lc(token_content($token)) eq 'library'));
 }
 
 sub pascal_keywords($mode = MODE_RELAX) {
