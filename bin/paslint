@@ -3,7 +3,6 @@
 # Enable Modern Perl.
 use feature ':5.36';
 
-use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 

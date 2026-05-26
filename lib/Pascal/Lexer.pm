@@ -2,7 +2,6 @@ package Pascal::Lexer;
 
 use feature ':5.36';
 
-use Data::Dumper;
 use Exporter 'import';
 
 our @EXPORT = qw(lexer_create lexer_has_next lexer_next lexer_peek lexer_lex init $PROGRAM);
