@@ -8,38 +8,38 @@ use Pascal::AST;
 
 
 use constant {
-    PARSER_ASTS  => 'asts',
-    PARSER_INDEX => 'index',
+    ASTS  => 'asts',
+    INDEX => 'index',
 };
 
 
 sub new($class) {
     my $self = {};
-    $self->{PARSER_ASTS} = ();
-    $self->{PARSER_INDEX} = 0;
+    $self->{ASTS} = ();
+    $self->{INDEX} = 0;
     bless $self, $class;
 }
 
 sub add_ast($self, $ast) {
-    push @{$self->{PARSER_ASTS}}, $ast;
+    push @{$self->{ASTS}}, $ast;
 }
 
 sub has_next($self) {
-    my $i = $self->{PARSER_INDEX};
-    my $len = scalar @{$self->{PARSER_ASTS}};
+    my $i = $self->{INDEX};
+    my $len = scalar @{$self->{ASTS}};
     $i < $len;
 }
 
 sub next($self) {
-    my $i = $self->{PARSER_INDEX};
-    my $ast = @{$self->{PARSER_ASTS}}[$i];
-    ($self->{PARSER_INDEX})++;
+    my $i = $self->{INDEX};
+    my $ast = @{$self->{ASTS}}[$i];
+    ($self->{INDEX})++;
     $ast;
 }
 
 sub peek($self) {
-    my $i = $self->{PARSER_INDEX};
-    my $ast = @{$self->{PARSER_ASTS}}[$i];
+    my $i = $self->{INDEX};
+    my $ast = @{$self->{ASTS}}[$i];
     $ast;
 }
 

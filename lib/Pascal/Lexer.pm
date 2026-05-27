@@ -21,35 +21,35 @@ use constant {
 };
 
 use constant {
-    LEXER_TOKENS => 'tokens',
-    LEXER_INDEX  => 'index',
+    TOKENS => 'tokens',
+    INDEX  => 'index',
 };
 
 our $PROGRAM = {};
 
 sub new($class) {
     my $self = {};
-    $self->{LEXER_TOKENS} = ();
-    $self->{LEXER_INDEX} = 0;
+    $self->{TOKENS} = ();
+    $self->{INDEX} = 0;
     bless $self, $class;
 }
 
 sub has_next($self) {
-    my $index = $self->{LEXER_INDEX};
-    my $len = scalar @{$self->{LEXER_TOKENS}};
+    my $index = $self->{INDEX};
+    my $len = scalar @{$self->{TOKENS}};
     $index < $len;
 }
 
 sub next($self) {
-    my $i = $self->{LEXER_INDEX};
-    my $t = @{$self->{LEXER_TOKENS}}[$i];
-    ($self->{LEXER_INDEX})++;
+    my $i = $self->{INDEX};
+    my $t = @{$self->{TOKENS}}[$i];
+    ($self->{INDEX})++;
     $t;
 }
 
 sub peek($self) {
-    my $i = $self->{LEXER_INDEX};
-    my $t = @{$self->{LEXER_TOKENS}}[$i];
+    my $i = $self->{INDEX};
+    my $t = @{$self->{TOKENS}}[$i];
     $t;
 }
 
@@ -89,7 +89,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -104,7 +104,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -119,7 +119,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -144,7 +144,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -167,7 +167,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -182,7 +182,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
@@ -199,7 +199,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{LEXER_TOKENS}}, $t;
+            push @{$self->{TOKENS}}, $t;
 
             $i = $j;
         }
