@@ -2,10 +2,6 @@ package Pascal::Lexer;
 
 use v5.36;
 
-use Exporter 'import';
-
-our @EXPORT = qw(lexer_create lexer_has_next lexer_next lexer_peek lexer_lex init $PROGRAM);
-
 use Pascal::Token;
 
 # Pascal mode for keywords and modifiers.
@@ -31,33 +27,33 @@ use constant {
 
 our $PROGRAM = {};
 
-sub lexer_create() {
-    my $lexer = {};
-    $lexer->{LEXER_TOKENS} = ();
-    $lexer->{LEXER_INDEX} = 0;
-    $lexer;
+sub new($class) {
+    my $self = {};
+    $self->{LEXER_TOKENS} = ();
+    $self->{LEXER_INDEX} = 0;
+    bless $self, $class;
 }
 
-sub lexer_has_next($lexer) {
-    my $index = $lexer->{LEXER_INDEX};
-    my $len = scalar @{$lexer->{LEXER_TOKENS}};
+sub has_next($self) {
+    my $index = $self->{LEXER_INDEX};
+    my $len = scalar @{$self->{LEXER_TOKENS}};
     $index < $len;
 }
 
-sub lexer_next($lexer) {
-    my $i = $lexer->{LEXER_INDEX};
-    my $t = @{$lexer->{LEXER_TOKENS}}[$i];
-    ($lexer->{LEXER_INDEX})++;
+sub next($self) {
+    my $i = $self->{LEXER_INDEX};
+    my $t = @{$self->{LEXER_TOKENS}}[$i];
+    ($self->{LEXER_INDEX})++;
     $t;
 }
 
-sub lexer_peek($lexer) {
-    my $i = $lexer->{LEXER_INDEX};
-    my $t = @{$lexer->{LEXER_TOKENS}}[$i];
+sub peek($self) {
+    my $i = $self->{LEXER_INDEX};
+    my $t = @{$self->{LEXER_TOKENS}}[$i];
     $t;
 }
 
-sub lexer_lex($lexer, $s, $l) {
+sub lex($self, $s, $l) {
     my $i = 0;
     my $len = length($s);
 
@@ -93,7 +89,7 @@ sub lexer_lex($lexer, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -108,7 +104,7 @@ sub lexer_lex($lexer, $s, $l) {
 
             $j++;
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -123,7 +119,7 @@ sub lexer_lex($lexer, $s, $l) {
 
             $j++;
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -148,7 +144,7 @@ sub lexer_lex($lexer, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -171,7 +167,7 @@ sub lexer_lex($lexer, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -186,7 +182,7 @@ sub lexer_lex($lexer, $s, $l) {
 
             $j++;
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -203,7 +199,7 @@ sub lexer_lex($lexer, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$lexer->{LEXER_TOKENS}}, $t;
+            push @{$self->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
@@ -273,6 +269,10 @@ sub is_code($s) {
 }
 
 sub init($config = {}) {
+    if (defined $config && eval { $config->isa(__PACKAGE__) }) {
+        die "init() is a utility function";
+    }
+
     # Simply ignore $config for now.
 
     # TODO: Set Pascal mode.

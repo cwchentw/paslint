@@ -19,17 +19,17 @@ my $RULES = RULE_LONG_LINE | RULE_SNAKE_CASE;
 
 
 # Simply use default setting for now.
-init();
+Pascal::Lexer::init();
 
 for my $arg (@ARGV) {
     my $file_name = $arg;
     open(my $FH, '<', $file_name) or die "Unable to open $file_name";
 
-    my $lexer = lexer_create();
+    my $lexer = Pascal::Lexer->new();
     my $line_number = 1;
 
     while (my $line = <$FH>) {
-        lexer_lex($lexer, $line, $line_number);
+        $lexer->lex($line, $line_number);
 
         $line_number++;
     }
