@@ -1,0 +1,62 @@
+#!/bin/sh
+
+if ! command -v fpc >/dev/null 2>&1; then
+    echo "No Free Pascal on the system" >&2
+    exit 1
+fi
+
+CWD=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) || exit 1
+
+DEMO_DIR="${CWD}/demo"
+DIST_DIR="${CWD}/dist"
+OBJ_DIR="${CWD}/obj"
+
+if [ ! -d "$DEMO_DIR" ]; then
+    echo "$DEMO_DIR not exist" >&2
+    exit 1
+fi
+
+mkdir -p "$DIST_DIR"
+mkdir -p "$OBJ_DIR"
+
+DEMO_FILES="Dummy.lpr
+HelloWorld.lpr"
+
+while IFS= read -r entry; do
+    if [ -f "${DEMO_DIR}/${entry}" ]; then
+        fpc -O2 \
+            "-Fu${DEMO_DIR}" \
+            "-FU${OBJ_DIR}" \
+            "-FE${DIST_DIR}" \
+            "${DEMO_DIR}/${entry}" >/dev/null 2>&1
+    else
+        echo "${DEMO_DIR}/${entry} not exist" >&2
+    fi
+done <<EOF_SRC
+$DEMO_FILES
+EOF_SRC
+
+while IFS= read -r entry; do
+    PROGRAM="${DIST_DIR}/${entry%.*}"
+    if [ -x "${PROGRAM}" ]; then
+        echo "Run ${PROGRAM}"
+        "${PROGRAM}"
+    fi
+done <<EOF_DIST
+$DEMO_FILES
+EOF_DIST
+
+if [ -z "${DIST_DIR}" ] || [ "${DIST_DIR}" = "/" ]; then
+    echo "DIST_DIR is dangerous or empty: ${DIST_DIR}" >&2
+    exit 1
+fi
+
+if [ -z "${OBJ_DIR}" ] || [ "${OBJ_DIR}" = "/" ]; then
+    echo "Error: OBJ_DIR is dangerous or empty: '${OBJ_DIR}'" >&2
+    exit 1
+fi
+
+rm -rf "${DIST_DIR}" "${OBJ_DIR}"
+
+mkdir -p "${DIST_DIR}"
+mkdir -p "${OBJ_DIR}"

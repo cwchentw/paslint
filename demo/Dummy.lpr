@@ -1,0 +1,5 @@
+
+Program Dummy;
+
+Begin
+End.

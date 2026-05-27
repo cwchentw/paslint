@@ -1,0 +1,42 @@
+#!/bin/sh
+
+CWD=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) || exit 1
+
+SMOKE_LIBRARY="${CWD}/tools/lib/smoke.sh"
+
+if [ -f "$SMOKE_LIBRARY" ]; then
+    . "$SMOKE_LIBRARY"
+else
+    echo "Error: Unable to load the smoke library: $SMOKE_LIBRARY" >&2
+    exit 1
+fi
+
+PROGRAM="${CWD}/bin/paslint"
+
+if [ ! -x "$PROGRAM" ]; then
+    echo "$PROGRAM not exist" >&2
+    exit 1
+fi
+
+DEMO_SRC="${CWD}/demo"
+
+if [ ! -d "$DEMO_SRC" ]; then
+    echo "$DEMO_SRC not exist" >&2
+    exit 1
+fi
+
+FAILED_TESTS=0
+
+RUN_TEST() {
+    "$@" || FAILED_TESTS=$((FAILED_TESTS + 1))
+}
+
+RUN_TEST SMOKE_RUN "$PROGRAM" "${DEMO_SRC}/Dummy.lpr"
+RUN_TEST SMOKE_RUN "$PROGRAM" "${DEMO_SRC}/HelloWorld.lpr"
+
+if [ "$FAILED_TESTS" -ne 0 ]; then
+    echo "[Result] $FAILED_TESTS test(s) failed." >&2
+    exit 1
+fi
+
+echo "[Result] All tests passed successfully."
