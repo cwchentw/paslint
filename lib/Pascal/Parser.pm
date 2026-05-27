@@ -2,11 +2,6 @@ package Pascal::Parser;
 
 use v5.36;
 
-use Exporter 'import';
-
-our @EXPORT = qw(parser_create parser_add_ast parser_has_next parser_next
-    parser_peek parser_parse);
-
 use Pascal::Token;
 use Pascal::Lexer;
 use Pascal::AST;
@@ -18,47 +13,47 @@ use constant {
 };
 
 
-sub parser_create() {
-    my $parser = {};
-    $parser->{PARSER_ASTS} = ();
-    $parser->{PARSER_INDEX} = 0;
-    $parser;
+sub new($class) {
+    my $self = {};
+    $self->{PARSER_ASTS} = ();
+    $self->{PARSER_INDEX} = 0;
+    bless $self, $class;
 }
 
-sub parser_add_ast($parser, $ast) {
-    push @{$parser->{PARSER_ASTS}}, $ast;
+sub add_ast($self, $ast) {
+    push @{$self->{PARSER_ASTS}}, $ast;
 }
 
-sub parser_has_next($parser) {
-    my $i = $parser->{PARSER_INDEX};
-    my $len = scalar @{$parser->{PARSER_ASTS}};
+sub has_next($self) {
+    my $i = $self->{PARSER_INDEX};
+    my $len = scalar @{$self->{PARSER_ASTS}};
     $i < $len;
 }
 
-sub parser_next($parser) {
-    my $i = $parser->{PARSER_INDEX};
-    my $ast = @{$parser->{PARSER_ASTS}}[$i];
-    ($parser->{PARSER_INDEX})++;
+sub next($self) {
+    my $i = $self->{PARSER_INDEX};
+    my $ast = @{$self->{PARSER_ASTS}}[$i];
+    ($self->{PARSER_INDEX})++;
     $ast;
 }
 
-sub parser_peek($parser) {
-    my $i = $parser->{PARSER_INDEX};
-    my $ast = @{$parser->{PARSER_ASTS}}[$i];
+sub peek($self) {
+    my $i = $self->{PARSER_INDEX};
+    my $ast = @{$self->{PARSER_ASTS}}[$i];
     $ast;
 }
 
-sub parser_parse($parser, $lexer) {
+sub parse($self, $lexer) {
     while (lexer_has_next($lexer)) {
         my $peek = lexer_peek($lexer);
 
         if (is_program_declaration_token($peek)) {
-            parser_add_ast($parser,
-                parser_parse_statement($parser, $lexer));
+            add_ast($self,
+                parse_statement($self, $lexer));
         }
         elsif (is_variable_block_token($peek)) {
-            parser_add_ast($parser,
-                parser_parse_variable_block($parser, $lexer));
+            add_ast($self,
+                parse_variable_block($self, $lexer));
         }
 
         # Discard anything else.
@@ -66,7 +61,7 @@ sub parser_parse($parser, $lexer) {
     }
 }
 
-sub parser_parse_variable_block($parser, $lexer) {
+sub parse_variable_block($self, $lexer) {
     my $ast = block_ast_create();
 
     while (lexer_has_next($lexer)) {
@@ -98,7 +93,7 @@ sub parser_parse_variable_block($parser, $lexer) {
         }
         elsif (is_identifier_token($peek)) {
             block_ast_add_statement($ast,
-                parser_parse_statement($parser, $lexer));
+                parse_statement($self, $lexer));
         }
         else {
             # Discard anything else.
@@ -111,7 +106,7 @@ sub parser_parse_variable_block($parser, $lexer) {
     $ast;
 }
 
-sub parser_parse_statement($parser, $lexer) {
+sub parse_statement($self, $lexer) {
     my $ast = ast_create();
 
     while (lexer_has_next($lexer)) {

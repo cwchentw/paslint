@@ -37,11 +37,11 @@ for my $arg (@ARGV) {
 
     close $FH;
 
-    my $parser = parser_create();
-    parser_parse($parser, $lexer);
+    my $parser = Pascal::Parser->new();
+    $parser->parse($lexer);
 
-    while (parser_has_next($parser)) {
-        my $ast = parser_next($parser);
+    while ($parser->has_next()) {
+        my $ast = $parser->next();
 
         say ast_format($ast);
     }
