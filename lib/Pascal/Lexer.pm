@@ -76,12 +76,12 @@ sub lex($self, $s, $l) {
             if (is_assignment(substr($s, $j, 2))) {
                 $j = $j + 2;
 
-                $t->set_type(Pascal::Token->TOKEN_TYPE_ASSIGNMENT);
+                $t->set_type(Pascal::Token->TYPE_ASSIGNMENT);
             }
             else {
                 $j++;
 
-                $t->set_type(Pascal::Token->TOKEN_TYPE_DECLARATION);
+                $t->set_type(Pascal::Token->TYPE_DECLARATION);
             }
 
             $t->set_content(substr($s, $i, $j - $i));
@@ -96,7 +96,7 @@ sub lex($self, $s, $l) {
         elsif (is_equality($peek)) {
             my $t = Pascal::Token->new();
 
-            $t->set_type(Pascal::Token->TOKEN_TYPE_EQUALITY);
+            $t->set_type(Pascal::Token->TYPE_EQUALITY);
             $t->set_content($peek);
 
             $t->set_line_number($l);
@@ -111,7 +111,7 @@ sub lex($self, $s, $l) {
         elsif (is_statement($peek)) {
             my $t = Pascal::Token->new();
 
-            $t->set_type(Pascal::Token->TOKEN_TYPE_STATEMENT);
+            $t->set_type(Pascal::Token->TYPE_STATEMENT);
             $t->set_content($peek);
 
             $t->set_line_number($l);
@@ -138,7 +138,7 @@ sub lex($self, $s, $l) {
                 $j++;
             }
 
-            $t->set_type(Pascal::Token->TOKEN_TYPE_SYMBOL);
+            $t->set_type(Pascal::Token->TYPE_SYMBOL);
             $t->set_content($sym);
 
             $t->set_line_number($l);
@@ -157,9 +157,9 @@ sub lex($self, $s, $l) {
 
             my $word = substr($s, $i, $j - $i);
             if (is_keyword($word)) {
-                $t->set_type(Pascal::Token->TOKEN_TYPE_KEYWORD);
+                $t->set_type(Pascal::Token->TYPE_KEYWORD);
             } else {
-                $t->set_type(Pascal::Token->TOKEN_TYPE_IDENTIFIER);
+                $t->set_type(Pascal::Token->TYPE_IDENTIFIER);
             }
 
             $t->set_content($word);
@@ -174,7 +174,7 @@ sub lex($self, $s, $l) {
         elsif (is_newline($peek)) {
             my $t = Pascal::Token->new();
 
-            $t->set_type(Pascal::Token->TOKEN_TYPE_NEWLINE);
+            $t->set_type(Pascal::Token->TYPE_NEWLINE);
             $t->set_content($peek);
 
             $t->set_line_number($l);
@@ -193,7 +193,7 @@ sub lex($self, $s, $l) {
                 $j++;
             }
 
-            $t->set_type(Pascal::Token->TOKEN_TYPE_CODE);
+            $t->set_type(Pascal::Token->TYPE_CODE);
             $t->set_content(substr($s, $i, $j - $i));
 
             $t->set_line_number($l);
