@@ -137,7 +137,7 @@ sub _ast_format($ast) {
     my $s = '[' . ast_type($ast) . '] ';
     while (ast_has_next($ast)) {
         my $t = ast_next($ast);
-        $s = $s . token_format($t) . ' ';
+        $s = $s . $t->format() . ' ';
     }
     $s;
 }

@@ -75,36 +75,36 @@ sub lexer_lex($lexer, $s, $l) {
             $i = $j;
         }
         elsif (is_declaration($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
             if (is_assignment(substr($s, $j, 2))) {
                 $j = $j + 2;
 
-                token_set_type($t, TOKEN_TYPE_ASSIGNMENT);
+                $t->set_type(Pascal::Token->TOKEN_TYPE_ASSIGNMENT);
             }
             else {
                 $j++;
 
-                token_set_type($t, TOKEN_TYPE_DECLARATION);
+                $t->set_type(Pascal::Token->TOKEN_TYPE_DECLARATION);
             }
 
-            token_set_content($t, substr($s, $i, $j - $i));
+            $t->set_content(substr($s, $i, $j - $i));
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             push @{$lexer->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
         elsif (is_equality($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
-            token_set_type($t, TOKEN_TYPE_EQUALITY);
-            token_set_content($t, $peek);
+            $t->set_type(Pascal::Token->TOKEN_TYPE_EQUALITY);
+            $t->set_content($peek);
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             $j++;
 
@@ -113,13 +113,13 @@ sub lexer_lex($lexer, $s, $l) {
             $i = $j;
         }
         elsif (is_statement($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
-            token_set_type($t, TOKEN_TYPE_STATEMENT);
-            token_set_content($t, $peek);
+            $t->set_type(Pascal::Token->TOKEN_TYPE_STATEMENT);
+            $t->set_content($peek);
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             $j++;
 
@@ -128,7 +128,7 @@ sub lexer_lex($lexer, $s, $l) {
             $i = $j;
         }
         elsif (is_symbol($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
             my $sym;
             if (is_compound_symbol(substr($s, $j, 2))) {
@@ -142,18 +142,18 @@ sub lexer_lex($lexer, $s, $l) {
                 $j++;
             }
 
-            token_set_type($t, TOKEN_TYPE_SYMBOL);
-            token_set_content($t, $sym);
+            $t->set_type(Pascal::Token->TOKEN_TYPE_SYMBOL);
+            $t->set_content($sym);
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             push @{$lexer->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
         elsif (is_idenfitier_prefix($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
             while ($j < $len && is_identifier(substr($s, $j, 1))) {
                 $j++;
@@ -161,28 +161,28 @@ sub lexer_lex($lexer, $s, $l) {
 
             my $word = substr($s, $i, $j - $i);
             if (is_keyword($word)) {
-                token_set_type($t, TOKEN_TYPE_KEYWORD);
+                $t->set_type(Pascal::Token->TOKEN_TYPE_KEYWORD);
             } else {
-                token_set_type($t, TOKEN_TYPE_IDENTIFIER);
+                $t->set_type(Pascal::Token->TOKEN_TYPE_IDENTIFIER);
             }
 
-            token_set_content($t, $word);
+            $t->set_content($word);
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             push @{$lexer->{LEXER_TOKENS}}, $t;
 
             $i = $j;
         }
         elsif (is_newline($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
-            token_set_type($t, TOKEN_TYPE_NEWLINE);
-            token_set_content($t, $peek);
+            $t->set_type(Pascal::Token->TOKEN_TYPE_NEWLINE);
+            $t->set_content($peek);
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             $j++;
 
@@ -191,17 +191,17 @@ sub lexer_lex($lexer, $s, $l) {
             $i = $j;
         }
         elsif (is_code($peek)) {
-            my $t = token_create();
+            my $t = Pascal::Token->new();
 
             while ($j < $len && is_code(substr($s, $j, 1))) {
                 $j++;
             }
 
-            token_set_type($t, TOKEN_TYPE_CODE);
-            token_set_content($t, substr($s, $i, $j - $i));
+            $t->set_type(Pascal::Token->TOKEN_TYPE_CODE);
+            $t->set_content(substr($s, $i, $j - $i));
 
-            token_set_line_number($t, $l);
-            token_set_column_number($t, $i + 1);
+            $t->set_line_number($l);
+            $t->set_column_number($i + 1);
 
             push @{$lexer->{LEXER_TOKENS}}, $t;
 

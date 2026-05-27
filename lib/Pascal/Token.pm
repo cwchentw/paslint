@@ -2,19 +2,6 @@ package Pascal::Token;
 
 use v5.36;
 
-use Exporter 'import';
-
-our @EXPORT = qw(token_create token_type token_set_type token_content
-    token_set_content token_line_number token_set_line_number
-    token_column_number token_set_column_number token_format
-    is_token_type is_declaration_token is_newline_token
-    is_statement_token is_identifier_token is_block_token
-    is_variable_block_token is_program_declaration_token
-    TOKEN_TYPE_UNKNOWN TOKEN_TYPE_SPACE TOKEN_TYPE_DECLARATION
-    TOKEN_TYPE_ASSIGNMENT TOKEN_TYPE_EQUALITY TOKEN_TYPE_STATEMENT
-    TOKEN_TYPE_SYMBOL TOKEN_TYPE_KEYWORD TOKEN_TYPE_IDENTIFIER
-    TOKEN_TYPE_NEWLINE TOKEN_TYPE_CODE);
-
 
 use constant {
     TOKEN_TYPE    => 'type',
@@ -38,91 +25,91 @@ use constant {
 };
 
 
-sub token_create() {
-    my $t = {};
-    token_set_type($t, TOKEN_TYPE_UNKNOWN);
-    token_set_content($t, '');
-    token_set_line_number($t, 1);
-    token_set_column_number($t, 1);
-    $t;
+sub new($class) {
+    my $self = {};
+    set_type($self, TOKEN_TYPE_UNKNOWN);
+    set_content($self, '');
+    set_line_number($self, 1);
+    set_column_number($self, 1);
+    bless $self, $class;
 }
 
-sub token_type($token) {
-    $token->{TOKEN_TYPE};
+sub type($self) {
+    $self->{TOKEN_TYPE};
 }
 
-sub token_set_type($token, $type) {
-    $token->{TOKEN_TYPE} = $type;
+sub set_type($self, $type) {
+    $self->{TOKEN_TYPE} = $type;
 }
 
-sub token_content($token) {
-    $token->{TOKEN_CONTENT};
+sub content($self) {
+    $self->{TOKEN_CONTENT};
 }
 
-sub token_set_content($token, $content) {
-    $token->{TOKEN_CONTENT} = $content;
+sub set_content($self, $content) {
+    $self->{TOKEN_CONTENT} = $content;
 }
 
-sub token_line_number($token) {
-    $token->{TOKEN_LINE};
+sub line_number($self) {
+    $self->{TOKEN_LINE};
 }
 
-sub token_set_line_number($token, $n) {
-    $token->{TOKEN_LINE} = $n;
+sub set_line_number($self, $n) {
+    $self->{TOKEN_LINE} = $n;
 }
 
-sub token_column_number($token) {
-    $token->{TOKEN_COLUMN};
+sub column_number($self) {
+    $self->{TOKEN_COLUMN};
 }
 
-sub token_set_column_number($token, $n) {
-    $token->{TOKEN_COLUMN} = $n;
+sub set_column_number($self, $n) {
+    $self->{TOKEN_COLUMN} = $n;
 }
 
-sub token_format($t) {
-    "[" . $t->{TOKEN_TYPE} . "] "
-    . "(" . $t->{TOKEN_LINE} . "," . $t->{TOKEN_COLUMN} . ") "
-    . "<" . $t->{TOKEN_CONTENT} . ">";
+sub format($self) {
+    "[" . $self->{TOKEN_TYPE} . "] "
+    . "(" . $self->{TOKEN_LINE} . "," . $self->{TOKEN_COLUMN} . ") "
+    . "<" . $self->{TOKEN_CONTENT} . ">";
 }
 
-sub is_token_type($token, $type) {
-    token_type($token) eq $type;
+sub is_type($self, $type) {
+    type($self) eq $type;
 }
 
-sub is_declaration_token($token) {
-    is_token_type($token, TOKEN_TYPE_DECLARATION);
+sub is_declaration($self) {
+    is_type($self, TOKEN_TYPE_DECLARATION);
 }
 
-sub is_newline_token($token) {
-    is_token_type($token, TOKEN_TYPE_NEWLINE);
+sub is_newline($self) {
+    is_type($self, TOKEN_TYPE_NEWLINE);
 }
 
-sub is_statement_token($token) {
-    is_token_type($token, TOKEN_TYPE_STATEMENT);
+sub is_statement($self) {
+    is_type($self, TOKEN_TYPE_STATEMENT);
 }
 
-sub is_identifier_token($token) {
-    is_token_type($token, TOKEN_TYPE_IDENTIFIER);
+sub is_identifier($self) {
+    is_type($self, TOKEN_TYPE_IDENTIFIER);
 }
 
-sub is_block_token($token) {
-    is_token_type($token, TOKEN_TYPE_KEYWORD)
-        and ((lc(token_content($token)) eq 'begin')
-            or (lc(token_content($token)) eq 'end'));
+sub is_block($self) {
+    is_type($self, TOKEN_TYPE_KEYWORD)
+        and ((lc(content($self)) eq 'begin')
+            or (lc(content($self)) eq 'end'));
 }
 
-sub is_variable_block_token($token) {
-    is_token_type($token, TOKEN_TYPE_KEYWORD)
-        and ((lc(token_content($token)) eq 'const')
-            or (lc(token_content($token)) eq 'type')
-            or (lc(token_content($token)) eq 'var'));
+sub is_variable_block($self) {
+    is_type($self, TOKEN_TYPE_KEYWORD)
+        and ((lc(content($self)) eq 'const')
+            or (lc(content($self)) eq 'type')
+            or (lc(content($self)) eq 'var'));
 }
 
-sub is_program_declaration_token($token) {
-    is_token_type($token, TOKEN_TYPE_KEYWORD)
-        and ((lc(token_content($token)) eq 'program')
-            or (lc(token_content($token)) eq 'unit')
-            or (lc(token_content($token)) eq 'library'));
+sub is_program_declaration($self) {
+    is_type($self, TOKEN_TYPE_KEYWORD)
+        and ((lc(content($self)) eq 'program')
+            or (lc(content($self)) eq 'unit')
+            or (lc(content($self)) eq 'library'));
 }
 
 1;

@@ -47,11 +47,11 @@ sub parse($self, $lexer) {
     while (lexer_has_next($lexer)) {
         my $peek = lexer_peek($lexer);
 
-        if (is_program_declaration_token($peek)) {
+        if ($peek->is_program_declaration()) {
             add_ast($self,
                 parse_statement($self, $lexer));
         }
-        elsif (is_variable_block_token($peek)) {
+        elsif ($peek->is_variable_block()) {
             add_ast($self,
                 parse_variable_block($self, $lexer));
         }
@@ -67,7 +67,7 @@ sub parse_variable_block($self, $lexer) {
     while (lexer_has_next($lexer)) {
         my $peek = lexer_peek($lexer);
 
-        if (is_newline_token($peek)) {
+        if ($peek->is_newline()) {
             # Discard the token.
             lexer_next($lexer);
 
@@ -75,23 +75,23 @@ sub parse_variable_block($self, $lexer) {
             next;
         }
 
-        if (is_declaration_token($peek)) {
+        if ($peek->is_declaration()) {
             # The block ends.
             last;
         }
 
-        if (is_block_token($peek)) {
+        if ($peek->is_block()) {
             # The block ends.
             last;
         }
 
-        if (is_variable_block_token($peek)) {
+        if ($peek->is_variable_block()) {
             block_ast_set_type($ast,
                 AST_TYPE_VARIABLE_DECLARATION_BLOCK);
             # Discard the token.
             lexer_next($lexer);
         }
-        elsif (is_identifier_token($peek)) {
+        elsif ($peek->is_identifier()) {
             block_ast_add_statement($ast,
                 parse_statement($self, $lexer));
         }
@@ -112,7 +112,7 @@ sub parse_statement($self, $lexer) {
     while (lexer_has_next($lexer)) {
         my $peek = lexer_peek($lexer);
 
-        if (is_newline_token($peek)) {
+        if ($peek->is_newline()) {
             # Discard the token.
             lexer_next($lexer);
 
@@ -120,7 +120,7 @@ sub parse_statement($self, $lexer) {
             next;
         }
 
-        if (is_statement_token($peek)) {
+        if ($peek->is_statement()) {
             # Discard the token.
             lexer_next($lexer);
 
@@ -130,11 +130,11 @@ sub parse_statement($self, $lexer) {
 
         my $token = lexer_next($lexer);
 
-        if (is_program_declaration_token($token)) {
+        if ($token->is_program_declaration()) {
             ast_set_type($ast, AST_TYPE_PROGRAM_DECLARATION);
         }
-        elsif (is_identifier_token($token)) {
-            if (is_declaration_token(lexer_peek($lexer))) {
+        elsif ($token->is_identifier()) {
+            if ((lexer_peek($lexer))->is_declaration()) {
                 ast_set_type($ast, AST_TYPE_VARIABLE_DECLARATION);
             }
         }
