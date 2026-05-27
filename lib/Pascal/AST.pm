@@ -17,7 +17,7 @@ use Pascal::Token;
 use constant {
     AST_TYPE_UNKNOWN                    => 'unknown',
     AST_TYPE_PROGRAM_DECLARATION        => 'program_declaration',
-    AST_TYPE_VARIABLE_DECLARATION       => 'variable_delcaration',
+    AST_TYPE_VARIABLE_DECLARATION       => 'variable_declaration',
     AST_TYPE_VARIABLE_DECLARATION_BLOCK => 'variable_declaration_block',
 };
 
