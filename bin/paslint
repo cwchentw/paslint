@@ -5,7 +5,6 @@ use v5.36;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-use Pascal::Token;
 use Pascal::Lexer;
 use Pascal::AST;
 use Pascal::Parser;
