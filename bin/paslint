@@ -6,8 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 
 use Pascal::Lexer;
-use Pascal::AST;
-use Pascal::BlockAST;
 use Pascal::Parser;
 
 

@@ -2,7 +2,6 @@ package Pascal::BlockAST;
 
 use v5.36;
 
-use Pascal::Token;
 use Pascal::AST qw(:constants);
 
 

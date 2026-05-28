@@ -8,8 +8,6 @@ our @EXPORT_OK = qw(TYPE_UNKNOWN TYPE_PROGRAM_DECLARATION
     TYPE_VARIABLE_DECLARATION TYPE_VARIABLE_DECLARATION_BLOCK);
 our %EXPORT_TAGS = ( constants => \@EXPORT_OK );
 
-use Pascal::Token;
-
 
 use constant {
     TYPE_UNKNOWN                    => 'unknown',

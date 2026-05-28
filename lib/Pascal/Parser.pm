@@ -2,8 +2,6 @@ package Pascal::Parser;
 
 use v5.36;
 
-use Pascal::Token;
-use Pascal::Lexer;
 use Pascal::AST qw(:constants);
 use Pascal::BlockAST;
 
