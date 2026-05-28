@@ -4,7 +4,8 @@ use v5.36;
 
 use Pascal::Token;
 use Pascal::Lexer;
-use Pascal::AST;
+use Pascal::AST qw(:constants);
+use Pascal::BlockAST;
 
 
 use constant {
@@ -62,7 +63,7 @@ sub parse($self, $lexer) {
 }
 
 sub parse_variable_block($self, $lexer) {
-    my $ast = block_ast_create();
+    my $ast = Pascal::BlockAST->new();
 
     while ($lexer->has_next()) {
         my $peek = $lexer->peek();
@@ -86,14 +87,12 @@ sub parse_variable_block($self, $lexer) {
         }
 
         if ($peek->is_variable_block()) {
-            block_ast_set_type($ast,
-                AST_TYPE_VARIABLE_DECLARATION_BLOCK);
+            $ast->set_type(Pascal::AST->TYPE_VARIABLE_DECLARATION_BLOCK);
             # Discard the token.
             $lexer->next();
         }
         elsif ($peek->is_identifier()) {
-            block_ast_add_statement($ast,
-                parse_statement($self, $lexer));
+            $ast->add_statement(parse_statement($self, $lexer));
         }
         else {
             # Discard anything else.
@@ -107,7 +106,7 @@ sub parse_variable_block($self, $lexer) {
 }
 
 sub parse_statement($self, $lexer) {
-    my $ast = ast_create();
+    my $ast = Pascal::AST->new();
 
     while ($lexer->has_next()) {
         my $peek = $lexer->peek();
@@ -131,15 +130,15 @@ sub parse_statement($self, $lexer) {
         my $token = $lexer->next();
 
         if ($token->is_program_declaration()) {
-            ast_set_type($ast, AST_TYPE_PROGRAM_DECLARATION);
+            $ast->set_type(Pascal::AST->TYPE_PROGRAM_DECLARATION);
         }
         elsif ($token->is_identifier()) {
             if (($lexer->peek())->is_declaration()) {
-                ast_set_type($ast, AST_TYPE_VARIABLE_DECLARATION);
+                $ast->set_type(Pascal::AST->TYPE_VARIABLE_DECLARATION);
             }
         }
 
-        ast_add_tokens($ast, $token);
+        $ast->add_token($token);
     }
 
     $ast;
