@@ -1,6 +1,7 @@
 package Pascal::BlockAST;
 
 use v5.36;
+use builtin qw(true false);
 
 use Pascal::AST qw(:constants);
 
@@ -18,6 +19,10 @@ sub new($class) {
     $self->{STATEMENTS} = ();
     $self->{INDEX} = 0;
     bless $self, $class;
+}
+
+sub is_statement($self) {
+    false;
 }
 
 sub type($self) {
@@ -51,9 +56,14 @@ sub peek($self) {
     $t;
 }
 
+sub rewind($self) {
+    $self->{INDEX} = 0;
+}
+
 sub format($self) {
     my $s = '[' . $self->type() . ']' . "\n";
     my $len = scalar @{$self->{STATEMENTS}};
+
     for (my $i = 0; $i < $len; $i++) {
         my $ast = @{$self->{STATEMENTS}}[$i];
         $s = $s . $ast->format();

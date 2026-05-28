@@ -2,8 +2,8 @@
 Program HelloWorld;
 
 Var
-  Message : String;
+  some_message : String;
 Begin
-  Message := 'Hello World';
-  WriteLn(Message);
+  some_message := 'Hello World';
+  WriteLn(some_message);
 End.

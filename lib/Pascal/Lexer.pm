@@ -235,10 +235,6 @@ sub is_identifier($s) {
     $s =~ /[A-Za-z0-9_]/;
 }
 
-sub is_snake_case($s) {
-    $s =~ /_?[A-Za-z][A-Za-z0-9]*_[A-Za-z0-9]+/;
-}
-
 sub is_space($s) {
     $s =~ /[ \t]/;
 }

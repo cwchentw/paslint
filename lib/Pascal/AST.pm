@@ -1,6 +1,7 @@
 package Pascal::AST;
 
 use v5.36;
+use builtin qw(true false);
 
 use Exporter 'import';
 
@@ -29,6 +30,10 @@ sub new($class) {
     $self->{TOKENS} = ();
     $self->{INDEX} = 0;
     bless $self, $class;
+}
+
+sub is_statement($self) {
+    true;
 }
 
 sub type($self) {
@@ -62,11 +67,21 @@ sub peek($self) {
     $t;
 }
 
+sub rewind($self) {
+    $self->{INDEX} = 0;
+}
+
 sub format($self) {
     my $s = '[' . $self->type() . '] ';
-    while (has_next($self)) {
-        my $t = $self->next();
-        $s = $s . $t->format() . ' ';
+    my $len = scalar @{$self->{TOKENS}};
+
+    for (my $i = 0; $i < $len; $i++) {
+        my $t = @{$self->{TOKENS}}[$i];
+        $s = $s . $t->format();
+
+        if ($i < $len - 1) {
+            $s = $s . ' ';
+        }
     }
     $s;
 }

@@ -7,14 +7,7 @@ use lib "$FindBin::Bin/../lib";
 
 use Pascal::Lexer;
 use Pascal::Parser;
-
-
-# The lint rule switches.
-use constant {
-    RULE_LONG_LINE  => 1 << 0,  # 0001
-    RULE_SNAKE_CASE => 1 << 1,  # 0010
-};
-my $RULES = RULE_LONG_LINE | RULE_SNAKE_CASE;
+use Pascal::Linter;
 
 
 # Simply use default setting for now.
@@ -38,9 +31,6 @@ for my $arg (@ARGV) {
     my $parser = Pascal::Parser->new();
     $parser->parse($lexer);
 
-    while ($parser->has_next()) {
-        my $ast = $parser->next();
-
-        say $ast->format();
-    }
+    my $linter = Pascal::Linter->new(Pascal::Linter->ALL_RULES);
+    $linter->lint($parser, $file_name);
 }
