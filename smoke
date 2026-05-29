@@ -25,6 +25,9 @@ if [ ! -d "$DEMO_SRC" ]; then
     exit 1
 fi
 
+# Enable DEBUG mode.
+export DEBUG=1
+
 FAILED_TESTS=0
 
 RUN_TEST() {

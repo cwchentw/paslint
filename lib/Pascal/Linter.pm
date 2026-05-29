@@ -46,8 +46,9 @@ sub lint($self, $parser, $file_name) {
     while ($parser->has_next()) {
         my $ast = $parser->next();
 
-        # TODO: Only show AST in Debug mode.
-        say $ast->format();
+        if ($ENV{DEBUG}) {
+            say $ast->format();
+        }
 
         for my $rule (@{$self->{RULES}}) {
             $rule->($ast, $file_name);
