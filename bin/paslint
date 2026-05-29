@@ -10,11 +10,50 @@ use Pascal::Parser;
 use Pascal::Linter;
 
 
+use constant {
+    PROGRAM => 'paslint',
+    VERSION => '0.1.0',
+};
+
+
 # Simply use default setting for now.
 Pascal::Lexer::init();
 
+my @file_names = ();
+my $rules = Pascal::Linter->ALL_RULES;
 for my $arg (@ARGV) {
-    my $file_name = $arg;
+    if (($arg eq '-v') or ($arg eq '--version')) {
+        print_version();
+        exit;
+    }
+    elsif (($arg eq '-h') or ($arg eq '--help')) {
+        print_help();
+        exit;
+    }
+    elsif ($arg eq '--disable-long-line') {
+        $rules = $rules ^ Pascal::Linter->RULE_LONG_LINE;
+        next;
+    }
+    elsif ($arg eq '--disable-snake-case') {
+        $rules = $rules ^ Pascal::Linter->RULE_SNAKE_CASE;
+        next;
+    }
+    elsif ((rindex $arg, '-', 0) == 0) {
+        say {*STDERR} 'Unknown option: ' . $arg;
+        exit 1;
+    }
+
+    push @file_names, $arg;
+}
+
+if ((scalar @file_names) < 1) {
+    say {*STDERR} 'Error: No Pascal source file';
+    say {*STDERR} '';
+    print_help(*STDERR);
+    exit 1;
+}
+
+for my $file_name (@file_names) {
     open(my $FH, '<', $file_name) or die "Unable to open $file_name";
 
     my $lexer = Pascal::Lexer->new();
@@ -31,6 +70,20 @@ for my $arg (@ARGV) {
     my $parser = Pascal::Parser->new();
     $parser->parse($lexer);
 
-    my $linter = Pascal::Linter->new(Pascal::Linter->ALL_RULES);
+    my $linter = Pascal::Linter->new($rules);
     $linter->lint($parser, $file_name);
+}
+
+sub print_version() {
+    say VERSION;
+}
+
+sub print_help($stream = *STDOUT) {
+    say $stream 'Usage ' . PROGRAM . ' [option] <source.pas> ...';
+    say $stream "";
+    say $stream "Option:";
+    say $stream "    -v    --version    Show version info";
+    say $stream "    -h    --help       Show help info";
+    say $stream "    --disable-long-line";
+    say $stream "    --disable-snake-case";
 }
