@@ -31,7 +31,7 @@ sub _is_snake_case($ast, $file_name) {
             my $s = $t->content();
 
             if ($s =~ /_?[A-Za-z][A-Za-z0-9]*_[A-Za-z0-9]+/) {
-                say 'Snake case ' . '[' . $file_name . '] '
+                say 'Snake case: ' . '[' . $file_name . '] '
                     . '(' . $t->line_number() . ',' . $t->column_number . ') '
                     . $s;
             }

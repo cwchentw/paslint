@@ -31,7 +31,7 @@ sub _is_long_line($ast, $file_name) {
         }
 
         if ($t->column_number() > 80) {
-            say 'Long line ' . '[' . $file_name . '] '
+            say 'Long line: ' . '[' . $file_name . '] '
                 . ' at line ' . $t->line_number();
         }
     }
