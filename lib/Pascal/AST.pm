@@ -12,7 +12,9 @@ our %EXPORT_TAGS = ( constants => \@EXPORT_OK );
 
 use constant {
     TYPE_UNKNOWN                    => 'unknown',
+    TYPE_BLOCK                      => 'block',
     TYPE_PROGRAM_DECLARATION        => 'program_declaration',
+    TYPE_VARIABLE_ASSIGNMENT        => 'variable_assignment',
     TYPE_VARIABLE_DECLARATION       => 'variable_declaration',
     TYPE_VARIABLE_DECLARATION_BLOCK => 'variable_declaration_block',
 };
@@ -27,7 +29,7 @@ use constant {
 sub new($class) {
     my $self = {};
     set_type($self, TYPE_UNKNOWN);
-    $self->{TOKENS} = ();
+    $self->{TOKENS} = [];
     $self->{INDEX} = 0;
     bless $self, $class;
 }

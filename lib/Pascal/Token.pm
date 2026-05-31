@@ -80,6 +80,10 @@ sub is_declaration($self) {
     is_type($self, TYPE_DECLARATION);
 }
 
+sub is_assignment($self) {
+    is_type($self, TYPE_ASSIGNMENT);
+}
+
 sub is_newline($self) {
     is_type($self, TYPE_NEWLINE);
 }
@@ -96,6 +100,16 @@ sub is_block($self) {
     is_type($self, TYPE_KEYWORD)
         and ((lc(content($self)) eq 'begin')
             or (lc(content($self)) eq 'end'));
+}
+
+sub is_start_block($self) {
+    is_type($self, TYPE_KEYWORD)
+        and (lc(content($self)) eq 'begin');
+}
+
+sub is_end_block($self) {
+    is_type($self, TYPE_KEYWORD)
+        and (lc(content($self)) eq 'end');
 }
 
 sub is_variable_block($self) {

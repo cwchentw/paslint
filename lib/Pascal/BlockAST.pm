@@ -16,7 +16,7 @@ use constant {
 sub new($class) {
     my $self = {};
     set_type($self, TYPE_UNKNOWN);
-    $self->{STATEMENTS} = ();
+    $self->{STATEMENTS} = [];
     $self->{INDEX} = 0;
     bless $self, $class;
 }
