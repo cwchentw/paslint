@@ -147,6 +147,7 @@ sub parse_value_block($self, $lexer) {
 }
 
 sub parse_statement($self, $lexer) {
+    # TODO: Refactor AST into granular Statement and Expression sub-nodes.
     my $ast = Pascal::AST->new();
 
     while ($lexer->has_next()) {
