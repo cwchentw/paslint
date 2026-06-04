@@ -8,9 +8,9 @@ A lightweight, zero-dependency Delphi / Free Pascal linter written in core Perl.
 
 ## ⚡ Project Status
 
-> ⚠️ **Development Status: Experimental / WIP**
+> 🧪 **Experimental project, updates as needed**
 
-The internal Pascal engine utilizes a **fuzzy parser** approach. It focuses on identifying key patterns and structural elements while safely skipping complex or irrelevant code blocks. This keeps the linter blazing fast and highly adaptable, though it may not fully validate strict syntax rules.
+This project explores lightweight static analysis for Delphi and Free Pascal using a fuzzy parser approach. Updates will be made as needed, but there is no active roadmap at the moment. Feel free to explore, reuse, or fork the code if it fits your needs.
 
 ## 🛠️ System Requirements
 
