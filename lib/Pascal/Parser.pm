@@ -1,4 +1,5 @@
 package Pascal::Parser;
+use parent 'Parser';
 
 use v5.36;
 
@@ -6,40 +7,9 @@ use Pascal::AST qw(:constants);
 use Pascal::BlockAST;
 
 
-use constant {
-    ASTS  => 'asts',
-    INDEX => 'index',
-};
-
-
 sub new($class) {
-    my $self = {};
-    $self->{ASTS} = ();
-    $self->{INDEX} = 0;
+    my $self = $class->SUPER::new();
     bless $self, $class;
-}
-
-sub add_ast($self, $ast) {
-    push @{$self->{ASTS}}, $ast;
-}
-
-sub has_next($self) {
-    my $i = $self->{INDEX};
-    my $len = scalar @{$self->{ASTS}};
-    $i < $len;
-}
-
-sub next($self) {
-    my $i = $self->{INDEX};
-    my $ast = @{$self->{ASTS}}[$i];
-    ($self->{INDEX})++;
-    $ast;
-}
-
-sub peek($self) {
-    my $i = $self->{INDEX};
-    my $ast = @{$self->{ASTS}}[$i];
-    $ast;
 }
 
 sub parse($self, $lexer) {
@@ -47,16 +17,13 @@ sub parse($self, $lexer) {
         my $peek = $lexer->peek();
 
         if ($peek->is_program_declaration()) {
-            add_ast($self,
-                parse_statement($self, $lexer));
+            $self->add_ast(parse_statement($self, $lexer));
         }
         elsif ($peek->is_variable_block()) {
-            add_ast($self,
-                parse_value_block($self, $lexer));
+            $self->add_ast(parse_value_block($self, $lexer));
         }
         elsif ($peek->is_start_block()) {
-            add_ast($self,
-                parse_block($self, $lexer));
+            $self->add_ast(parse_block($self, $lexer));
         }
         else {
             # Discard anything else.
