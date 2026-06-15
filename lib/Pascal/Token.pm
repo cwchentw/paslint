@@ -1,17 +1,10 @@
 package Pascal::Token;
+use parent 'Token';
 
 use v5.36;
 
 
 use constant {
-    TYPE    => 'type',
-    CONTENT => 'content',
-    LINE    => 'line',
-    COLUMN  => 'column',
-};
-
-use constant {
-    TYPE_UNKNOWN     => 'unknown',
     TYPE_SPACE       => 'space',
     TYPE_DECLARATION => 'declaration',
     TYPE_ASSIGNMENT  => 'assignment',
@@ -26,54 +19,12 @@ use constant {
 
 
 sub new($class) {
-    my $self = {};
-    set_type($self, TYPE_UNKNOWN);
-    set_content($self, '');
-    set_line_number($self, 1);
-    set_column_number($self, 1);
+    my $self = $class->SUPER::new();
     bless $self, $class;
 }
 
-sub type($self) {
-    $self->{TYPE};
-}
-
-sub set_type($self, $type) {
-    $self->{TYPE} = $type;
-}
-
-sub content($self) {
-    $self->{CONTENT};
-}
-
-sub set_content($self, $content) {
-    $self->{CONTENT} = $content;
-}
-
-sub line_number($self) {
-    $self->{LINE};
-}
-
-sub set_line_number($self, $n) {
-    $self->{LINE} = $n;
-}
-
-sub column_number($self) {
-    $self->{COLUMN};
-}
-
-sub set_column_number($self, $n) {
-    $self->{COLUMN} = $n;
-}
-
-sub format($self) {
-    "[" . $self->{TYPE} . "] "
-    . "(" . $self->{LINE} . "," . $self->{COLUMN} . ") "
-    . "<" . $self->{CONTENT} . ">";
-}
-
 sub is_type($self, $type) {
-    type($self) eq $type;
+    $self->type() eq $type;
 }
 
 sub is_declaration($self) {
@@ -98,32 +49,32 @@ sub is_identifier($self) {
 
 sub is_block($self) {
     is_type($self, TYPE_KEYWORD)
-        and ((lc(content($self)) eq 'begin')
-            or (lc(content($self)) eq 'end'));
+        and ((lc($self->content()) eq 'begin')
+            or (lc($self->content()) eq 'end'));
 }
 
 sub is_start_block($self) {
     is_type($self, TYPE_KEYWORD)
-        and (lc(content($self)) eq 'begin');
+        and (lc($self->content()) eq 'begin');
 }
 
 sub is_end_block($self) {
     is_type($self, TYPE_KEYWORD)
-        and (lc(content($self)) eq 'end');
+        and (lc($self->content()) eq 'end');
 }
 
 sub is_variable_block($self) {
     is_type($self, TYPE_KEYWORD)
-        and ((lc(content($self)) eq 'const')
-            or (lc(content($self)) eq 'type')
-            or (lc(content($self)) eq 'var'));
+        and ((lc($self->content()) eq 'const')
+            or (lc($self->content()) eq 'type')
+            or (lc($self->content()) eq 'var'));
 }
 
 sub is_program_declaration($self) {
     is_type($self, TYPE_KEYWORD)
-        and ((lc(content($self)) eq 'program')
-            or (lc(content($self)) eq 'unit')
-            or (lc(content($self)) eq 'library'));
+        and ((lc($self->content()) eq 'program')
+            or (lc($self->content()) eq 'unit')
+            or (lc($self->content()) eq 'library'));
 }
 
 1;

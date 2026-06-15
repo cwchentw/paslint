@@ -1,8 +1,10 @@
 package Pascal::Lexer;
+use parent 'Lexer';
 
 use v5.36;
 
 use Pascal::Token;
+
 
 # Pascal mode for keywords and modifiers.
 use constant {
@@ -20,37 +22,12 @@ use constant {
     PROGRAM_COMPOUND_SYMBOLS => 'compound_symbols',
 };
 
-use constant {
-    TOKENS => 'tokens',
-    INDEX  => 'index',
-};
 
 our $PROGRAM = {};
 
 sub new($class) {
-    my $self = {};
-    $self->{TOKENS} = ();
-    $self->{INDEX} = 0;
+    my $self = $class->SUPER::new();
     bless $self, $class;
-}
-
-sub has_next($self) {
-    my $index = $self->{INDEX};
-    my $len = scalar @{$self->{TOKENS}};
-    $index < $len;
-}
-
-sub next($self) {
-    my $i = $self->{INDEX};
-    my $t = @{$self->{TOKENS}}[$i];
-    ($self->{INDEX})++;
-    $t;
-}
-
-sub peek($self) {
-    my $i = $self->{INDEX};
-    my $t = @{$self->{TOKENS}}[$i];
-    $t;
 }
 
 sub lex($self, $s, $l) {
@@ -89,7 +66,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -104,7 +81,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -119,7 +96,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -144,7 +121,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -167,7 +144,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -182,7 +159,7 @@ sub lex($self, $s, $l) {
 
             $j++;
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
@@ -199,7 +176,7 @@ sub lex($self, $s, $l) {
             $t->set_line_number($l);
             $t->set_column_number($i + 1);
 
-            push @{$self->{TOKENS}}, $t;
+            $self->add_token($t);
 
             $i = $j;
         }
