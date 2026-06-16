@@ -11,6 +11,10 @@ use constant {
     INDEX       => 'index',
 };
 
+use constant {
+    TYPE_VARIABLE_DECLARATION_BLOCK => 'variable_declaration_block',
+};
+
 
 sub new($class) {
     my $self = $class->SUPER::new();

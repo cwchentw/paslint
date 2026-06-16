@@ -47,6 +47,10 @@ sub is_identifier($self) {
     is_type($self, TYPE_IDENTIFIER);
 }
 
+sub is_keyword($self) {
+    is_type($self, TYPE_KEYWORD);
+}
+
 sub is_block($self) {
     is_type($self, TYPE_KEYWORD)
         and ((lc($self->content()) eq 'begin')

@@ -70,8 +70,17 @@ for my $file_name (@file_names) {
     my $parser = Pascal::Parser->new();
     $parser->parse($lexer);
 
-    my $linter = Pascal::Linter->new($rules);
-    $linter->lint($parser, $file_name);
+    while ($parser->has_next()) {
+        my $ast = $parser->peek();
+
+        say $ast->format();
+
+        $parser->next();
+    }
+
+    # FIXME: Pascal::Parser no longer expose Pascal::Token.
+    #my $linter = Pascal::Linter->new($rules);
+    #$linter->lint($parser, $file_name);
 }
 
 sub print_version() {

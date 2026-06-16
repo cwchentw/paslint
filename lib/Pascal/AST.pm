@@ -6,11 +6,20 @@ use builtin qw(true false);
 
 
 use constant {
-    TYPE_BLOCK                      => 'block',
-    TYPE_PROGRAM_DECLARATION        => 'program_declaration',
-    TYPE_VARIABLE_ASSIGNMENT        => 'variable_assignment',
-    TYPE_VARIABLE_DECLARATION       => 'variable_declaration',
-    TYPE_VARIABLE_DECLARATION_BLOCK => 'variable_declaration_block',
+    TYPE_BLOCK     => 'block',
+    TYPE_STATEMENT => 'statement',
+
+    TYPE_DECLARATION => 'declaration',
+    TYPE_VARIABLE    => 'variable',
+    TYPE_IDENTIFIER  => 'identifier',
+    TYPE_TYPE        => 'type',
+
+    TYPE_VARIABLE_DECLARATION_EXPRESSION => 'variable_declaration_expression',
+
+    TYPE_PROGRAM_DECLARATION => 'program_declaration',
+    
+    TYPE_VARIABLE_DECLARATION  => 'variable_declaration',
+    TYPE_VARIABLE_ASSIGNMENT   => 'variable_assignment',
 };
 
 
@@ -19,7 +28,6 @@ sub new($class) {
     bless $self, $class;
 }
 
-# FIXME: Pascal::AST should not be a statement AST.
 sub is_statement($self) {
     true;
 }
