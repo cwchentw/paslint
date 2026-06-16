@@ -11,7 +11,7 @@ use constant {
 
 sub new($class) {
     my $self = {};
-    $self->{ASTS} = ();
+    $self->{ASTS} = [];
     $self->{INDEX} = 0;
     bless $self, $class;
 }
