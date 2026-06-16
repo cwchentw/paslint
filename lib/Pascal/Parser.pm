@@ -3,7 +3,7 @@ use parent 'Parser';
 
 use v5.36;
 
-use Pascal::AST qw(:constants);
+use Pascal::AST;
 use Pascal::BlockAST;
 
 
@@ -59,7 +59,7 @@ sub parse_block($self, $lexer) {
             last;
         }
         elsif ($peek->is_identifier()) {
-            $ast->add_statement(parse_statement($self, $lexer));
+            $ast->add_child(parse_statement($self, $lexer));
         }
         else {
             # Discard anything else.
@@ -101,7 +101,7 @@ sub parse_value_block($self, $lexer) {
             $lexer->next();
         }
         elsif ($peek->is_identifier()) {
-            $ast->add_statement(parse_statement($self, $lexer));
+            $ast->add_child(parse_statement($self, $lexer));
         }
         else {
             # Discard anything else.

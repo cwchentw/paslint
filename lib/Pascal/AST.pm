@@ -4,14 +4,6 @@ use parent 'AST';
 use v5.36;
 use builtin qw(true false);
 
-use Exporter 'import';
-
-our @EXPORT_OK = qw(TYPE_UNKNOWN TYPE_PROGRAM_DECLARATION
-    TYPE_VARIABLE_DECLARATION TYPE_VARIABLE_DECLARATION_BLOCK);
-our %EXPORT_TAGS = ( constants => \@EXPORT_OK );
-
-
-*TYPE_UNKNOWN = \&AST::TYPE_UNKNOWN;
 
 use constant {
     TYPE_BLOCK                      => 'block',
@@ -27,6 +19,7 @@ sub new($class) {
     bless $self, $class;
 }
 
+# FIXME: Pascal::AST should not be a statement AST.
 sub is_statement($self) {
     true;
 }
