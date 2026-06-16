@@ -105,6 +105,7 @@ sub parse_variable_block($self, $lexer) {
 
         if ($peek->is_variable_block()) {
             my $var = Pascal::AST::VariableDeclaration->new();
+            $var->add_child($peek);
 
             $block->add_child($var);
 
@@ -154,6 +155,24 @@ sub parse_variable_declaration_statement($self, $lexer) {
 
             $stmt->add_child($expr);
         }
+        elsif ($peek->is_declaration()) {
+            my $declaration = Pascal::AST::Declaration->new();
+            $declaration->add_child($peek);
+
+            $stmt->add_child($declaration);
+
+            $lexer->next();
+            $peek = $lexer->peek();
+
+            if ($peek->is_identifier() or $peek->is_keyword()) {
+                my $t = Pascal::AST::Type->new();
+                $t->add_child($peek);
+
+                $stmt->add_child($t);
+
+                $lexer->next();
+            }
+        }
         else {
             # Discard anything else.
             $lexer->next();
@@ -184,24 +203,6 @@ sub parse_variable_declaration_expression($self, $lexer) {
             $expr->add_child($var);
 
             $lexer->next();
-        }
-        elsif ($peek->is_declaration()) {
-            my $declaration = Pascal::AST::Declaration->new();
-            $declaration->add_child($peek);
-
-            $expr->add_child($declaration);
-
-            $lexer->next();
-            $peek = $lexer->peek();
-
-            if ($peek->is_identifier() or $peek->is_keyword()) {
-                my $t = Pascal::AST::Type->new();
-                $t->add_child($peek);
-
-                $expr->add_child($t);
-
-                $lexer->next();
-            }
         }
         else {
             last;
