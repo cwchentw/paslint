@@ -4,9 +4,9 @@ use v5.36;
 
 
 use constant {
-    TYPE   => 'type',
-    TOKENS => 'tokens',
-    INDEX  => 'index',
+    TYPE     => 'type',
+    CHILDREN => 'children',
+    INDEX    => 'index',
 };
 
 use constant {
@@ -17,7 +17,7 @@ use constant {
 sub new($class) {
     my $self = {};
     set_type($self, TYPE_UNKNOWN);
-    $self->{TOKENS} = [];
+    $self->{CHILDREN} = [];
     $self->{INDEX} = 0;
     bless $self, $class;
 }
@@ -30,27 +30,22 @@ sub set_type($self, $type) {
     $self->{TYPE} = $type;
 }
 
-sub add_token($self, $token) {
-    push @{$self->{TOKENS}}, $token;
+sub add_child($self, $child) {
+    push @{$self->{CHILDREN}}, $child;
 }
 
 sub has_next($self) {
-    my $i = $self->{INDEX};
-    my $len = scalar @{$self->{TOKENS}};
-    $i < $len;
+    $self->{INDEX} < scalar @{$self->{CHILDREN}};
 }
 
 sub next($self) {
-    my $i = $self->{INDEX};
-    my $t = @{$self->{TOKENS}}[$i];
-    ($self->{INDEX})++;
-    $t;
+    my $c = $self->{CHILDREN}[$self->{INDEX}];
+    $self->{INDEX}++;
+    $c;
 }
 
 sub peek($self) {
-    my $i = $self->{INDEX};
-    my $t = @{$self->{TOKENS}}[$i];
-    $t;
+    $self->{CHILDREN}[$self->{INDEX}];
 }
 
 sub rewind($self) {
@@ -59,16 +54,18 @@ sub rewind($self) {
 
 sub format($self) {
     my $s = '[' . $self->type() . '] ';
-    my $len = scalar @{$self->{TOKENS}};
+    my $len = scalar @{$self->{CHILDREN}};
 
     for (my $i = 0; $i < $len; $i++) {
-        my $t = @{$self->{TOKENS}}[$i];
-        $s = $s . $t->format();
-
-        if ($i < $len - 1) {
-            $s = $s . ' ';
+        my $c = $self->{CHILDREN}[$i];
+        if ($c->can('format')) {
+            $s .= $c->format();
+        } else {
+            $s .= $c;
         }
+        $s .= ' ' if $i < $len - 1;
     }
+
     $s;
 }
 

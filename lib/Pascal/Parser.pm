@@ -150,7 +150,7 @@ sub parse_statement($self, $lexer) {
             }
         }
 
-        $ast->add_token($token);
+        $ast->add_child($token);
     }
 
     $ast;
