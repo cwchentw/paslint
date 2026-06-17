@@ -1,4 +1,4 @@
-package Lexer;
+package Parse::Lexer;
 
 use v5.36;
 

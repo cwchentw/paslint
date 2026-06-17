@@ -1,4 +1,4 @@
-package Parser;
+package Parse::Parser;
 
 use v5.36;
 

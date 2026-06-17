@@ -1,4 +1,4 @@
-package Token;
+package Parse::Token;
 
 use v5.36;
 

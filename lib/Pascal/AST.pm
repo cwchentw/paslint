@@ -1,5 +1,5 @@
 package Pascal::AST;
-use parent 'AST';
+use parent 'Parse::AST';
 
 use v5.36;
 use builtin qw(true false);

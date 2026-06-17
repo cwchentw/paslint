@@ -1,4 +1,4 @@
-package AST;
+package Parse::AST;
 
 use v5.36;
 

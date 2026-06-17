@@ -1,5 +1,5 @@
 package Pascal::Token;
-use parent 'Token';
+use parent 'Parse::Token';
 
 use v5.36;
 
